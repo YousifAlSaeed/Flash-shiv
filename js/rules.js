@@ -190,11 +190,11 @@ FS.Rules = (function () {
     return card;
   }
 
-  // Short text for what a played card did, e.g. "played Strike · 5 reversed".
+  // Short text for what a played card did, e.g. "played Strike · 5 cancelled".
   function describe(res) {
     switch (res.effect) {
-      case 'unreverse': return 'used a Shiv · ' + C.name(res.target) + ' restored';
-      case 'strike': return 'played Strike · ' + C.name(res.target) + ' reversed';
+      case 'unreverse': return 'used a Shiv · ' + C.name(res.target) + ' brought back';
+      case 'strike': return 'played Strike · ' + C.name(res.target) + ' cancelled';
       case 'mirror': return 'played Mirror · piles swapped';
       case 'double': return 'played Force · total doubled';
       case 'one': return 'played ' + C.name(res.card) + ' as a 1';

@@ -43,8 +43,8 @@ FS.Table = (function () {
     const effects = {
       add: 'Adds ' + card.value,
       one: 'Counts as 1',
-      unreverse: 'Restores your reversed ' + (res.target ? C.name(res.target) : 'card'),
-      strike: 'Reverses their ' + (res.target ? C.name(res.target) : 'card'),
+      unreverse: 'Brings back your cancelled ' + (res.target ? C.name(res.target) : 'card'),
+      strike: 'Cancels their ' + (res.target ? C.name(res.target) : 'card'),
       mirror: 'Swaps the piles',
       double: 'Doubles your total'
     };

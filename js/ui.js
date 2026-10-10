@@ -191,12 +191,12 @@ FS.UI = (function () {
       '<li>If the totals become <b>equal</b>, the field is cleared and both players shiv again.</li>' +
       '<li>If your attack leaves you <b>below</b> the opponent, you lose. If you have no cards on your turn, you lose.</li>' +
       '<li><b>Foul:</b> you lose if your last card is a Strike, Mirror, Blast, or Force.</li>' +
-      '<li><b>Strike</b> cancels the last card your opponent played. The card stays on the table, but its value is no longer counted. This is called a reversed card.</li>' +
-      '<li><b>Shiv (1)</b> brings back your reversed card, so its value counts again. If you have no reversed card, it adds 1 to your total.</li>' +
-      '<li>If you play any other card while your card is reversed, the new card takes its place.</li>' +
+      '<li><b>Strike</b> cancels the last card your opponent played. The card stays on the table, but its value is no longer counted.</li>' +
+      '<li><b>Shiv (1)</b> brings back your cancelled card, so its value counts again. If you have no cancelled card, it adds 1 to your total.</li>' +
+      '<li>If you play any other card while your card is cancelled, the new card takes its place.</li>' +
       '<li><b>Mirror</b> swaps the two piles.</li>' +
       '<li><b>Blast</b> destroys one hidden card from the opponent\'s hand, then you attack again.</li>' +
-      '<li><b>Force</b> doubles your total. A Strike can reverse it.</li>' +
+      '<li><b>Force</b> doubles your total. A Strike can cancel it.</li>' +
       '</ul><div class="center"><button id="btn-close" class="primary" type="button">CLOSE</button></div></div>'
     );
     $('btn-close').addEventListener('click', hideOverlay);

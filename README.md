@@ -40,14 +40,14 @@ You lose if:
 
 | Card | In the deck | What it does |
 | --- | --- | --- |
-| **Shiv (1)** | 2 | Brings back your reversed card, so its value counts again. If you have no reversed card, it adds 1 to your total. |
+| **Shiv (1)** | 2 | Brings back your cancelled card, so its value counts again. If you have no cancelled card, it adds 1 to your total. |
 | **2 – 7** | 5, 5, 5, 4, 3, 2 | Adds its value to your total. |
-| **Strike** | 2 | Cancels the last card your opponent played. The card stays on the table, but its value is no longer counted. This is called a *reversed* card. |
+| **Strike** | 2 | Cancels the last card your opponent played. The card stays on the table, but its value is no longer counted. |
 | **Mirror** | 2 | Swaps the two piles. Their lead becomes yours. |
 | **Blast** | 2 | Destroys a hidden card from your opponent's hand, then you attack again. |
-| **Force** | 2 | Doubles your total. A Strike can reverse it. |
+| **Force** | 2 | Doubles your total. A Strike can cancel it. |
 
-**Reversed cards.** When a Strike reverses your card, you have two choices on your turn: play a Shiv to bring that card back, or play any other card, which takes the reversed card's place.
+**Cancelled cards.** When a Strike cancels your card, you have two choices on your turn: play a Shiv to bring that card back, or play any other card, which takes the cancelled card's place.
 
 The full deck has 34 cards and each game deals 32 of them, so two cards are always missing and you can never be completely sure what's still out there.
 
