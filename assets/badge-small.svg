@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -160 320 320" role="img" aria-label="Flash Shiv badge">
+  <!-- Simplified badge for small sizes: the title bar and the card backs -->
+  <g transform="rotate(45)">
+    <rect x="-100" y="-100" width="200" height="200" rx="10" fill="#17070a" stroke="#ff2e3e" stroke-width="12"/>
+  </g>
+  <g transform="scale(3.1) translate(-29 -37)" fill="none" stroke="#f4f6ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 46 C17 44 9 34 6 20 C8 25 10 28 13 30 L7 29 C9 33 12 35 15 37 L9 36.5 C12 40 15 42 18 43 L13 43 C16 45 19 46.5 23 47 Z" fill="#f4f6ff" fill-opacity="0.35"/>
+    <g transform="translate(58 0) scale(-1 1)">
+      <path d="M23 46 C17 44 9 34 6 20 C8 25 10 28 13 30 L7 29 C9 33 12 35 15 37 L9 36.5 C12 40 15 42 18 43 L13 43 C16 45 19 46.5 23 47 Z" fill="#f4f6ff" fill-opacity="0.35"/>
+    </g>
+    <polygon points="29,7 34.5,24 33.5,47 24.5,47 23.5,24" fill="#f4f6ff"/>
+    <path d="M15 46 Q29 52 43 46 L43 50 Q29 56 15 50 Z" fill="#f4f6ff"/>
+    <rect x="26" y="53" width="6" height="11" rx="1" fill="#f4f6ff"/>
+    <circle cx="29" cy="67" r="3" fill="#f4f6ff"/>
+  </g>
+</svg>

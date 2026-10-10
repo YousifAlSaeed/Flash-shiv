@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/badge.svg" width="220" alt="Flash Shiv logo: a winged dagger inside a red diamond">
+</p>
+
 # Flash Shiv
 
 **A two-player card duel about staying ahead by the smallest margin.**
@@ -67,6 +71,7 @@ index.html          The page
 css/style.css       All styling
 js/cards.js         The cards and the deck
 js/rules.js         The game rules (shared by the browser and the server)
+js/card-art.js      The artwork on each card
 js/ai.js            The computer opponent
 js/ui.js            Drawing the screen
 js/table.js         Card selection and move previews
@@ -77,6 +82,7 @@ js/music.js         Music player
 js/music-*.js       The three music tracks
 js/main.js          Menu and settings
 server/server.js    Online server
+assets/             The logo
 ```
 
 ## Built with

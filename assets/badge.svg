@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -160 320 320" role="img" aria-label="Flash Shiv logo: a winged dagger inside a red diamond">
+  <circle r="152" fill="none" stroke="#ff465a" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="7 9"/>
+  <g transform="rotate(45)">
+    <rect x="-100" y="-100" width="200" height="200" rx="8" fill="#2a0a10" stroke="#ff2e3e" stroke-width="5"/>
+    <rect x="-87" y="-87" width="174" height="174" rx="4" fill="none" stroke="#4da3ff" stroke-width="2.5"/>
+  </g>
+  <g transform="scale(2.5) translate(-29 -37)" fill="none" stroke="#f4f6ff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 46 C17 44 9 34 6 20 C8 25 10 28 13 30 L7 29 C9 33 12 35 15 37 L9 36.5 C12 40 15 42 18 43 L13 43 C16 45 19 46.5 23 47 Z" fill="#f4f6ff" fill-opacity="0.3"/>
+    <path d="M21 44 C16 41 11 35 8.5 26" opacity="0.6"/>
+    <g transform="translate(58 0) scale(-1 1)">
+      <path d="M23 46 C17 44 9 34 6 20 C8 25 10 28 13 30 L7 29 C9 33 12 35 15 37 L9 36.5 C12 40 15 42 18 43 L13 43 C16 45 19 46.5 23 47 Z" fill="#f4f6ff" fill-opacity="0.3"/>
+      <path d="M21 44 C16 41 11 35 8.5 26" opacity="0.6"/>
+    </g>
+    <polygon points="29,7 34.5,24 33.5,47 24.5,47 23.5,24" fill="#f4f6ff" fill-opacity="0.3"/>
+    <line x1="29" y1="13" x2="29" y2="45" opacity="0.7"/>
+    <path d="M15 46 Q29 52 43 46 L43 50 Q29 56 15 50 Z" fill="#f4f6ff"/>
+    <rect x="26" y="53" width="6" height="11" rx="1" fill="#f4f6ff" fill-opacity="0.1"/>
+    <path d="M26 56.5 L32 55 M26 60 L32 58.5" opacity="0.8"/>
+    <circle cx="29" cy="67" r="3" fill="#f4f6ff"/>
+    <path d="M40 4 L41.54 9.46 L47 11 L41.54 12.54 L40 18 L38.46 12.54 L33 11 L38.46 9.46 Z" fill="#4da3ff" stroke="#dff0ff" stroke-width="0.5"/>
+  </g>
+</svg>

@@ -18,7 +18,7 @@ const R = global.FS.Rules;
 
 const PORT = Number(process.argv[2] || process.env.PORT || 3000);
 const ROOT = path.join(__dirname, '..');
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript', '.svg': 'image/svg+xml' };
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 const IDLE_MS = 10 * 60 * 1000;
 
@@ -218,7 +218,8 @@ function serveFile(urlPath, res) {
   const file = path.normalize(path.join(ROOT, rel));
   const allowed = file === path.join(ROOT, 'index.html') ||
     file.startsWith(path.join(ROOT, 'css') + path.sep) ||
-    file.startsWith(path.join(ROOT, 'js') + path.sep);
+    file.startsWith(path.join(ROOT, 'js') + path.sep) ||
+    file.startsWith(path.join(ROOT, 'assets') + path.sep);
   const type = MIME[path.extname(file)];
   if (!allowed || !type) {
     res.writeHead(404);

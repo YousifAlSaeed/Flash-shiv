@@ -7,24 +7,12 @@ FS.UI = (function () {
   const C = FS.Cards;
   const R = FS.Rules;
 
-  const ICONS = {
-    strike: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="13,2 4,14 11,14 9,22 20,9 13,9"/></svg>',
-    mirror: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h15l-4-4M20 16H5l4 4"/></svg>',
-    blast: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12,1 14.5,8 21,5 17.5,11.5 23,15 16,15.5 16.5,22.5 12,17.5 7.5,22.5 8,15.5 1,15 6.5,11.5 3,5 9.5,8"/></svg>',
-    force: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l7-7 7 7M5 20l7-7 7 7"/></svg>'
-  };
-
   const $ = function (id) { return document.getElementById(id); };
 
   function cardEl(card, tag) {
     const el = document.createElement(tag || 'div');
     el.className = 'card ' + card.type + (C.isSpecial(card) ? '' : ' n' + card.value);
-    if (C.isSpecial(card)) {
-      el.innerHTML = ICONS[card.type] + '<span class="lbl">' + C.name(card).toUpperCase() + '</span>';
-    } else {
-      el.innerHTML = '<span class="val">' + card.value + '</span>' +
-        (C.isShiv(card) ? '<span class="lbl">SHIV</span>' : '');
-    }
+    el.innerHTML = FS.CardArt.svg(card);
     el.setAttribute('aria-label', C.name(card));
     return el;
   }
@@ -158,6 +146,7 @@ FS.UI = (function () {
   // opts: { error, onComputer, onCreate, onJoin(code) }
   function showMenu(opts) {
     showOverlay(
+      '<img class="menu-logo" src="assets/badge.svg" alt="">' +
       '<h2>FLASH<span class="hot">//</span>SHIV</h2><p>Choose how to play</p>' +
       '<div class="menu">' +
       '<button id="menu-computer" class="primary" type="button">VS COMPUTER</button>' +
