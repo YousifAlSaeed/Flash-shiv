@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flash Shiv</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <h1>FLASH<span>//</span>SHIV</h1>
+      <div class="top-actions">
+        <button id="btn-settings" class="ghost icon" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          SETTINGS
+        </button>
+        <button id="btn-rules" class="ghost" type="button">HOW TO PLAY</button>
+        <button id="btn-menu" class="ghost" type="button">MENU</button>
+      </div>
+    </header>
+
+    <section class="seat" aria-label="Opponent">
+      <div class="label">OPPONENT</div>
+      <div id="opp-hand" class="hand small"></div>
+      <div class="deck right">
+        <span id="opp-deck-count" class="label">DECK 6</span>
+        <div id="opp-deck" class="card back small"></div>
+      </div>
+    </section>
+
+    <section class="field" aria-label="Playing field">
+      <div class="midline"></div>
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+      <div class="vs"><span>VS</span></div>
+
+      <div class="half">
+        <div class="side opp-side">
+          <div id="opp-pile" class="pile"></div>
+          <div id="opp-tri" class="tri point-right"></div>
+          <div id="opp-total" class="total">0</div>
+        </div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="half">
+        <div></div>
+        <div></div>
+        <div class="side you-side">
+          <div id="you-total" class="total">0</div>
+          <div id="you-tri" class="tri point-left"></div>
+          <div id="you-pile" class="pile"></div>
+        </div>
+      </div>
+    </section>
+
+    <p id="status" class="status" aria-live="polite"></p>
+
+    <section class="seat" aria-label="You">
+      <div class="deck">
+        <div id="you-deck" class="card back"></div>
+        <span id="you-deck-count" class="label">DECK 6</span>
+      </div>
+      <div id="you-hand" class="hand"></div>
+      <div class="label right">YOU</div>
+    </section>
+
+    <div class="actions">
+      <p id="hint" class="hint"></p>
+      <button id="btn-play" class="primary" type="button" disabled>PLAY CARD</button>
+    </div>
+  </main>
+
+  <div id="overlay" class="overlay" hidden>
+    <div id="overlay-box" class="overlay-box" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <div id="settings" class="overlay top-layer" hidden>
+    <div class="overlay-box settings" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <h2 id="settings-title">SETTINGS</h2>
+      <div class="meter">
+        <label for="vol-music">MUSIC</label>
+        <input id="vol-music" type="range" min="0" max="100" step="1" value="100">
+        <output id="vol-music-value" for="vol-music">100</output>
+      </div>
+      <div class="meter">
+        <label for="vol-sfx">SFX</label>
+        <input id="vol-sfx" type="range" min="0" max="100" step="1" value="100">
+        <output id="vol-sfx-value" for="vol-sfx">100</output>
+      </div>
+      <div class="toggles">
+        <button id="btn-music" class="ghost" type="button">MUSIC: ON</button>
+        <button id="btn-track" class="ghost" type="button">TRACK: TENSE</button>
+      </div>
+      <button id="btn-settings-close" class="primary" type="button">CLOSE</button>
+    </div>
+  </div>
+
+  <script src="js/cards.js"></script>
+  <script src="js/rules.js"></script>
+  <script src="js/ai.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/music-chill.js"></script>
+  <script src="js/music-tense.js"></script>
+  <script src="js/music-epic.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/local.js"></script>
+  <script src="js/online.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
