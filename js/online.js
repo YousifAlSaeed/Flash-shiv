@@ -23,7 +23,9 @@ FS.Online = (function () {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body || {})
     }).then(function (res) {
-      return res.json().then(function (data) {
+      // A site with no game server (a static host) answers with a web page, not JSON.
+      return res.json().catch(function () { return null; }).then(function (data) {
+        if (!data) throw new TypeError('No game server');
         if (!res.ok) throw new Error(data.error || 'Request failed');
         return data;
       });
@@ -119,7 +121,7 @@ FS.Online = (function () {
     onFail = fail;
     request.then(connect).catch(function (err) {
       const offline = err instanceof TypeError;
-      onFail(offline ? 'Online play needs the game server. Start it with "node server/server.js" and open the address it prints.' : err.message);
+      onFail(offline ? 'Online play is not available at this address, because it has no game server. You can still play the computer.' : err.message);
     });
   }
 
