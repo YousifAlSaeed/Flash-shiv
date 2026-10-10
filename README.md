@@ -6,16 +6,17 @@
 
 **A two-player card duel about staying ahead by the smallest margin.**
 
-Every card you play has to beat your opponent's total. Play too little and you lose on the spot. Play too much and you've burned a card you'll want later. Four special cards can flip the whole fight in a single move.
+Every card you play has to beat your opponent's total. Play too little and you lose on the spot. Play too much and you've burned a card you'll want later. Four kinds of special card can flip the whole fight in a single move.
 
 Play it in your browser against the computer, or open a room and duel a friend online.
 
 ## Features
 
 - **Two ways to play** — a computer opponent that plays fair (it never looks at your hand), or online rooms you join with a four-letter code or an invite link.
-- **Dark neon fantasy look** — a glowing arcane table where every card value has its own colour.
+- **Dark neon fantasy look** — a glowing red and black table with touches of blue.
+- **Artwork on every card** — each number sits inside its own shape, each special card has its own picture, and the Shiv is a winged dagger.
 - **Sound effects made from scratch** — thunder for Strike, chimes for Mirror, a bomb for Blast, a deep swell for Force. All generated live in the browser; there isn't a single audio file in the game.
-- **Three generated music tracks** — Chill, Tense and Epic, switchable from the settings panel.
+- **Three generated music tracks** — Chill, Tense and Epic, switchable from the settings panel, with separate volume controls for music and sound effects.
 - **Move previews** — select a card and the game tells you exactly what it will do before you commit.
 - **Cheat-resistant online play** — the server runs every match, so your browser never receives your opponent's hand.
 - **No dependencies** — plain HTML, CSS and JavaScript, plus a small Node.js server with nothing to install.
@@ -39,14 +40,16 @@ You lose if:
 
 | Card | In the deck | What it does |
 | --- | --- | --- |
-| **Shiv (1)** | 2 | Restores your reversed card. Otherwise adds 1. |
+| **Shiv (1)** | 2 | Brings back your reversed card, so its value counts again. If you have no reversed card, it adds 1 to your total. |
 | **2 – 7** | 5, 5, 5, 4, 3, 2 | Adds its value to your total. |
-| **Strike** | 4 | Reverses your opponent's last card, so it no longer counts. |
-| **Mirror** | 4 | Swaps the two piles. Their lead becomes yours. |
-| **Blast** | 4 | Destroys a hidden card from your opponent's hand, then you attack again. |
-| **Force** | 4 | Doubles your total. A Strike can reverse it. |
+| **Strike** | 2 | Cancels the last card your opponent played. The card stays on the table, but its value is no longer counted. This is called a *reversed* card. |
+| **Mirror** | 2 | Swaps the two piles. Their lead becomes yours. |
+| **Blast** | 2 | Destroys a hidden card from your opponent's hand, then you attack again. |
+| **Force** | 2 | Doubles your total. A Strike can reverse it. |
 
-The full deck has 42 cards and each game deals 32 of them, so you never know exactly what's still out there.
+**Reversed cards.** When a Strike reverses your card, you have two choices on your turn: play a Shiv to bring that card back, or play any other card, which takes the reversed card's place.
+
+The full deck has 34 cards and each game deals 32 of them, so two cards are always missing and you can never be completely sure what's still out there.
 
 ## Running the game
 

@@ -4,10 +4,10 @@ window.FS = window.FS || {};
 FS.Cards = (function () {
   'use strict';
 
-  // 42 cards in the full deck; each game deals 32 of them.
+  // 34 cards in the full deck; each game deals 32 of them.
   const NUMBER_COUNTS = { 1: 2, 2: 5, 3: 5, 4: 5, 5: 4, 6: 3, 7: 2 };
   const SPECIALS = ['strike', 'mirror', 'blast', 'force'];
-  const SPECIAL_COUNT = 4;
+  const SPECIAL_COUNT = 2;
   const NAMES = { strike: 'Strike', mirror: 'Mirror', blast: 'Blast', force: 'Force' };
 
   function buildDeck() {
