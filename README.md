@@ -12,14 +12,14 @@ Play it in your browser against the computer, or open a room and duel a friend o
 
 ## Features
 
-- **Two ways to play** — a computer opponent that plays fair (it never looks at your hand), or online rooms you join with a four-letter code or an invite link.
+- **Two ways to play** — a computer opponent that plays fair (it never looks at your hand), or online rooms you join with a four-letter code or an invite link. Online play needs no server: two browsers can connect directly.
 - **Dark neon fantasy look** — a glowing red and black table with touches of blue.
 - **Artwork on every card** — each number sits inside its own shape, each special card has its own picture, and the Shiv is a winged dagger.
 - **Sound effects made from scratch** — thunder for Strike, chimes for Mirror, a bomb for Blast, a deep swell for Force. All generated live in the browser; there isn't a single audio file in the game.
 - **Three generated music tracks** — Chill, Tense and Epic, switchable from the settings panel, with separate volume controls for music and sound effects.
 - **Move previews** — select a card and the game tells you exactly what it will do before you commit.
-- **Cheat-resistant online play** — the server runs every match, so your browser never receives your opponent's hand.
-- **No dependencies** — plain HTML, CSS and JavaScript, plus a small Node.js server with nothing to install.
+- **An optional game server** — run the included server and it runs every match, so no browser ever receives the other player's hand.
+- **Nothing to install** — plain HTML, CSS and JavaScript, plus a small Node.js server with no dependencies. The only outside library is PeerJS, loaded when two browsers connect directly.
 
 ## How to play
 
@@ -51,21 +51,31 @@ You lose if:
 
 The full deck has 34 cards and each game deals 32 of them, so two cards are always missing and you can never be completely sure what's still out there.
 
-## Running the game
+## Play it
 
-### Against the computer
+**[Play Flash Shiv in your browser](https://yousifalsaeed.github.io/Flash-shiv/)**
 
-Download the project and open `index.html` in a browser. That's all.
+- **Against the computer:** choose **VS computer**.
+- **Against a friend:** enter your name, choose **Create online room**, and send your friend the room code or the invite link. They enter their own name when they join, and each player sees the other's name during the game.
 
-### Online
+### How online play works
 
-You need [Node.js](https://nodejs.org) installed. From the project folder, run:
+The game picks one of two ways to connect, automatically:
+
+- **Directly between the two browsers.** This is what the link above uses, because that site only hosts files. The player who creates the room runs the match in their browser, so they need to keep their tab open. A free public service (PeerJS) introduces the two browsers to each other. Some networks block direct connections; if a friend can't join, that is the usual reason.
+- **Through the game server.** If you run the included server, it runs every match itself, each player's browser only ever receives its own hand, and a player who drops out can come back.
+
+## Running it yourself
+
+Download the project and open `index.html` in a browser to play the computer.
+
+To run the game server you need [Node.js](https://nodejs.org). From the project folder, run:
 
 ```bash
 node server/server.js
 ```
 
-Open the address it prints (for example `http://localhost:3000`), enter your name, choose **Create online room**, and share the code or invite link with your opponent. They enter their own name when they join, and each player sees the other's name during the game. Players on the same network can join using the network address the server prints.
+Open the address it prints (for example `http://localhost:3000`). Players on the same network can join using the network address the server prints.
 
 ## Project layout
 
@@ -79,7 +89,8 @@ js/ai.js            The computer opponent
 js/ui.js            Drawing the screen
 js/table.js         Card selection and move previews
 js/local.js         Game flow against the computer
-js/online.js        Game flow for online play
+js/match.js         Runs an online match (shared by the server and the room creator's browser)
+js/online.js        Online play: connecting, through the server or directly
 js/sound.js         Sound effects
 js/music.js         Music player
 js/music-*.js       The three music tracks
@@ -90,4 +101,4 @@ assets/             The logo
 
 ## Built with
 
-HTML, CSS, JavaScript, the Web Audio API and Node.js.
+HTML, CSS, JavaScript, the Web Audio API, WebRTC (through PeerJS) and Node.js.

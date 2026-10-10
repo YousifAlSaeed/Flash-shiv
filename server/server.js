@@ -9,12 +9,12 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 
-// The rules are the same files the browser uses.
+// The rules and the match flow are the same files the browser uses.
 global.window = global;
 require('../js/cards.js');
 require('../js/rules.js');
-const C = global.FS.Cards;
-const R = global.FS.Rules;
+require('../js/match.js');
+const Match = global.FS.Match;
 
 const PORT = Number(process.argv[2] || process.env.PORT || 3000);
 const ROOT = path.join(__dirname, '..');
@@ -35,24 +35,26 @@ function newCode() {
   return code;
 }
 
-// Player names are shown to the other player, so keep them short and plain.
-function cleanName(value, fallback) {
-  const name = String(value || '').replace(/[\u0000-\u001f\u007f<>]/g, '').trim().slice(0, 16);
-  return name || fallback;
+function push(room, seat, payload) {
+  const stream = room.streams[seat];
+  if (stream) stream.write('data: ' + JSON.stringify(payload) + '\n\n');
 }
 
 function createRoom(name) {
   const room = {
     code: newCode(),
-    names: [cleanName(name, 'Player 1'), 'Player 2'],
+    names: [Match.cleanName(name, 'Player 1'), 'Player 2'],
     tokens: [crypto.randomBytes(16).toString('hex'), null],
     streams: [null, null],
     last: [null, null],
-    rematch: [false, false],
-    state: null,
-    timer: null,
+    match: null,
     cleanup: null
   };
+  // The match hands back each seat's messages; the latest state is kept for reconnects.
+  room.match = Match.create(room.names, function (seat, payload, extra, keep) {
+    if (keep) room.last[seat] = payload;
+    push(room, seat, Object.assign({}, payload, extra));
+  });
   rooms.set(room.code, room);
   return room;
 }
@@ -60,147 +62,6 @@ function createRoom(name) {
 function seatOf(room, token) {
   const seat = room.tokens.indexOf(token);
   return token && seat >= 0 ? seat : -1;
-}
-
-function push(room, seat, payload) {
-  const stream = room.streams[seat];
-  if (stream) stream.write('data: ' + JSON.stringify(payload) + '\n\n');
-}
-
-// ---- What each player is allowed to see ----
-
-function hidden(count) {
-  return Array.from({ length: count }, function () { return { type: 'num', value: 0, hidden: true }; });
-}
-
-// The state from one seat's point of view: that seat is always player 0.
-function viewFor(room, seat) {
-  const st = room.state;
-  const me = st.players[seat];
-  const opp = st.players[R.other(seat)];
-  const rel = function (p) { return p === null ? null : (p === seat ? 0 : 1); };
-  return {
-    players: [
-      { hand: me.hand, deck: hidden(me.deck.length), pile: me.pile },
-      { hand: hidden(opp.hand.length), deck: hidden(opp.deck.length), pile: opp.pile }
-    ],
-    phase: st.phase,
-    turn: rel(st.turn),
-    tied: st.tied,
-    winner: rel(st.winner),
-    reason: st.reason,
-    picked: st.picks[seat] !== null,
-    names: [room.names[seat], room.names[R.other(seat)]]
-  };
-}
-
-function turnNote(room, seat) {
-  if (room.state.phase !== 'attack') return '';
-  return room.state.turn === seat ? ' · your turn' : ' · ' + room.names[room.state.turn] + '\'s turn';
-}
-
-// Sends the current state to both seats. textFor(seat) gives each side's message.
-function broadcast(room, textFor, extra) {
-  [0, 1].forEach(function (seat) {
-    const payload = { type: 'state', view: viewFor(room, seat), message: textFor(seat) + turnNote(room, seat) };
-    room.last[seat] = payload;
-    push(room, seat, Object.assign({}, payload, extra ? extra(seat) : null));
-  });
-}
-
-// ---- Match flow ----
-
-function schedule(room, fn, ms) {
-  clearTimeout(room.timer);
-  room.timer = setTimeout(fn, ms);
-}
-
-function startGame(room) {
-  room.state = R.newGame();
-  room.rematch = [false, false];
-  broadcast(room, function () { return 'Shiv to open the round'; });
-  schedule(room, function () { runShiv(room); }, 1200);
-}
-
-function runShiv(room) {
-  const st = room.state;
-  R.shiv(st);
-  if (st.phase === 'shivPick') {
-    return broadcast(room, function () { return 'Decks are empty · pick a card from your hand to shiv'; });
-  }
-  afterShiv(room);
-}
-
-function afterShiv(room) {
-  const st = room.state;
-  if (st.phase === 'over') return broadcast(room, function () { return 'No cards left'; });
-  const score = function (seat) { return R.total(st, seat) + ' vs ' + R.total(st, R.other(seat)); };
-  if (st.phase === 'shiv') {
-    broadcast(room, function (seat) { return 'Shiv tied ' + score(seat) + ' · again'; }, effect('shiv'));
-    return schedule(room, function () { runShiv(room); }, 1800);
-  }
-  broadcast(room, function (seat) { return 'Shiv · ' + score(seat); }, effect('shiv'));
-}
-
-// Tells both browsers which sound effect goes with this update.
-function effect(name) {
-  return function () { return { effect: name }; };
-}
-
-function who(room, seat, actor) {
-  return seat === actor ? 'You ' : room.names[actor] + ' ';
-}
-
-function doPlay(room, seat, index) {
-  const st = room.state;
-  if (st.phase !== 'attack' || st.turn !== seat) return 'It is not your turn';
-  if (!Number.isInteger(index) || index < 0 || index >= st.players[seat].hand.length) return 'No such card';
-
-  const res = R.playCard(st, seat, index);
-  if (st.phase === 'blastPick') {
-    broadcast(room, function (s) { return s === seat ? 'Blast · pick a card to destroy' : room.names[seat] + ' played Blast'; }, effect('blast'));
-    return null;
-  }
-  const tied = st.phase === 'shiv';
-  broadcast(room, function (s) { return who(room, s, seat) + R.describe(res) + (tied ? ' · tied, field clears' : ''); }, effect(res.effect));
-  if (tied) schedule(room, function () { runShiv(room); }, 1800);
-  return null;
-}
-
-function doBlast(room, seat, position) {
-  const st = room.state;
-  if (st.phase !== 'blastPick' || st.turn !== seat) return 'It is not your Blast';
-  if (!Number.isInteger(position) || position < 0 || position >= st.blastOrder.length) return 'No such card';
-
-  const card = R.resolveBlast(st, position);
-  broadcast(room, function (s) {
-    return 'Blast destroyed ' + (s === seat ? 'their ' : 'your ') + C.name(card);
-  }, function (s) {
-    return { destroyed: card, byYou: s === seat, effect: 'destroy' };
-  });
-  return null;
-}
-
-function doShivPick(room, seat, index) {
-  const st = room.state;
-  if (st.phase !== 'shivPick' || st.picks[seat] !== null) return 'You cannot pick now';
-  if (!Number.isInteger(index) || index < 0 || index >= st.players[seat].hand.length) return 'No such card';
-
-  R.pickShiv(st, seat, index);
-  if (st.phase === 'shivPick') {
-    broadcast(room, function (s) { return s === seat ? 'Waiting for ' + room.names[R.other(seat)] + '\'s pick' : room.names[seat] + ' has picked · your pick'; });
-    return null;
-  }
-  afterShiv(room);
-  return null;
-}
-
-function doRematch(room, seat) {
-  if (!room.state || room.state.phase !== 'over') return 'The game is not over';
-  room.rematch[seat] = true;
-  if (room.rematch[0] && room.rematch[1]) startGame(room);
-  else push(room, R.other(seat), { type: 'rematch' });
-  return null;
 }
 
 // ---- HTTP ----
@@ -253,7 +114,7 @@ function openStream(room, seat, req, res) {
   room.streams[seat] = res;
   clearTimeout(room.cleanup);
 
-  const other = R.other(seat);
+  const other = seat === 0 ? 1 : 0;
   if (room.last[seat]) push(room, seat, room.last[seat]);
   else push(room, seat, { type: 'waiting', room: room.code });
   if (room.last[other]) push(room, other, room.last[other]);
@@ -266,14 +127,12 @@ function openStream(room, seat, req, res) {
     push(room, other, { type: 'left' });
     if (!room.streams[other]) {
       room.cleanup = setTimeout(function () {
-        clearTimeout(room.timer);
+        room.match.stop();
         rooms.delete(room.code);
       }, IDLE_MS);
     }
   });
 }
-
-const ACTIONS = { play: doPlay, blast: doBlast, shivPick: doShivPick, rematch: doRematch };
 
 const server = http.createServer(function (req, res) {
   const url = new URL(req.url, 'http://localhost');
@@ -298,9 +157,9 @@ const server = http.createServer(function (req, res) {
       if (!room) return sendJson(res, 404, { error: 'Room not found' });
       if (room.tokens[1]) return sendJson(res, 409, { error: 'Room is full' });
       room.tokens[1] = crypto.randomBytes(16).toString('hex');
-      room.names[1] = cleanName(body.name, 'Player 2');
+      room.names[1] = Match.cleanName(body.name, 'Player 2');
       sendJson(res, 200, { room: room.code, token: room.tokens[1] });
-      startGame(room);
+      room.match.start();
     });
   }
 
@@ -308,12 +167,8 @@ const server = http.createServer(function (req, res) {
     return readJson(req, function (body) {
       const room = body && rooms.get(body.room);
       const seat = room ? seatOf(room, body.token) : -1;
-      const action = body && ACTIONS[body.type];
-      if (seat < 0 || !action || !Object.prototype.hasOwnProperty.call(ACTIONS, body.type)) {
-        return sendJson(res, 400, { error: 'Bad request' });
-      }
-      if (body.type !== 'rematch' && !room.state) return sendJson(res, 400, { error: 'The game has not started' });
-      const error = action(room, seat, body.index);
+      if (seat < 0) return sendJson(res, 400, { error: 'Bad request' });
+      const error = room.match.action(seat, body.type, body.index);
       sendJson(res, error ? 400 : 200, error ? { error: error } : { ok: true });
     });
   }
