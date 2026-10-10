@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-160 -160 320 320">
+  <!-- Tab icon: the badge reduced to a red diamond and a solid dagger so it reads at 16 pixels -->
+  <g transform="rotate(45)">
+    <rect x="-104" y="-104" width="208" height="208" rx="16" fill="#2a0a10" stroke="#ff2e3e" stroke-width="22"/>
+  </g>
+  <g transform="scale(3.3) translate(-29 -37)" fill="#f4f6ff">
+    <polygon points="29,7 35,24 34,47 24,47 23,24"/>
+    <path d="M13 46 Q29 52 45 46 L45 51 Q29 57 13 51 Z"/>
+    <rect x="25.5" y="53" width="7" height="13" rx="1"/>
+  </g>
+</svg>
