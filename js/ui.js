@@ -127,13 +127,14 @@ FS.UI = (function () {
     $('blast-row').appendChild(cardEl(card));
   }
 
-  function showResult(title, reason, youTotal, oppTotal, onAgain) {
+  function showResult(title, reason, youTotal, oppTotal, onAgain, oppName) {
     showOverlay(
       '<h2>' + title + '</h2><p>' + reason + '</p>' +
-      '<div class="score"><div>' + youTotal + '<span>YOU</span></div><div>' + oppTotal + '<span>OPPONENT</span></div></div>' +
+      '<div class="score"><div>' + youTotal + '<span>YOU</span></div><div>' + oppTotal + '<span id="result-opp">OPPONENT</span></div></div>' +
       '<button id="btn-again" class="primary" type="button">PLAY AGAIN</button>' +
       '<p id="overlay-note" class="note"></p>'
     );
+    if (oppName) $('result-opp').textContent = oppName.toUpperCase();
     $('btn-again').addEventListener('click', onAgain);
   }
 
@@ -143,13 +144,15 @@ FS.UI = (function () {
     if (el) el.textContent = text;
   }
 
-  // opts: { error, onComputer, onCreate, onJoin(code) }
+  // opts: { error, name, onComputer, onCreate(name), onJoin(code, name) }
   function showMenu(opts) {
     showOverlay(
       '<img class="menu-logo" src="assets/badge.svg" alt="">' +
       '<h2>FLASH<span class="hot">//</span>SHIV</h2><p>Choose how to play</p>' +
       '<div class="menu">' +
       '<button id="menu-computer" class="primary" type="button">VS COMPUTER</button>' +
+      '<div class="menu-divider">ONLINE</div>' +
+      '<input id="menu-name" type="text" maxlength="16" placeholder="YOUR NAME" autocomplete="off" aria-label="Your name">' +
       '<button id="menu-create" class="primary" type="button">CREATE ONLINE ROOM</button>' +
       '<form id="menu-join" class="join">' +
       '<input id="menu-code" type="text" maxlength="4" placeholder="CODE" autocomplete="off" aria-label="Room code">' +
@@ -159,11 +162,39 @@ FS.UI = (function () {
     );
     note(opts.error || '');
     $('menu-computer').addEventListener('click', opts.onComputer);
-    $('menu-create').addEventListener('click', opts.onCreate);
+    $('menu-name').value = opts.name || '';
+    $('menu-create').addEventListener('click', function () { opts.onCreate($('menu-name').value); });
     $('menu-join').addEventListener('submit', function (e) {
       e.preventDefault();
-      opts.onJoin($('menu-code').value);
+      opts.onJoin($('menu-code').value, $('menu-name').value);
     });
+  }
+
+  // Asks for a name before joining a room from an invite link.
+  function showNamePrompt(code, name, error, onJoin) {
+    showOverlay(
+      '<h2>ROOM <span id="prompt-code" class="hot"></span></h2>' +
+      '<p>Enter your name to join the game</p>' +
+      '<form id="prompt-form" class="menu">' +
+      '<input id="prompt-name" type="text" maxlength="16" placeholder="YOUR NAME" autocomplete="off" aria-label="Your name">' +
+      '<button class="primary" type="submit">JOIN ROOM</button>' +
+      '</form>' +
+      '<p id="overlay-note" class="note"></p>'
+    );
+    $('prompt-code').textContent = code;
+    $('prompt-name').value = name || '';
+    note(error || '');
+    $('prompt-name').focus();
+    $('prompt-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      onJoin($('prompt-name').value);
+    });
+  }
+
+  // Names shown beside each hand. With no arguments, the defaults.
+  function setNames(you, opponent) {
+    $('you-name').textContent = you || 'YOU';
+    $('opp-name').textContent = opponent || 'OPPONENT';
   }
 
   function showWaiting(code, link) {
@@ -212,6 +243,8 @@ FS.UI = (function () {
     showResult: showResult,
     showMenu: showMenu,
     showWaiting: showWaiting,
+    showNamePrompt: showNamePrompt,
+    setNames: setNames,
     note: note,
     showRules: showRules
   };

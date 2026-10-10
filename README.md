@@ -65,7 +65,7 @@ You need [Node.js](https://nodejs.org) installed. From the project folder, run:
 node server/server.js
 ```
 
-Open the address it prints (for example `http://localhost:3000`), choose **Create online room**, and share the code or invite link with your opponent. Players on the same network can join using the network address the server prints.
+Open the address it prints (for example `http://localhost:3000`), enter your name, choose **Create online room**, and share the code or invite link with your opponent. They enter their own name when they join, and each player sees the other's name during the game. Players on the same network can join using the network address the server prints.
 
 ## Project layout
 

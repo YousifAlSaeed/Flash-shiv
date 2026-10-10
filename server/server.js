@@ -35,9 +35,16 @@ function newCode() {
   return code;
 }
 
-function createRoom() {
+// Player names are shown to the other player, so keep them short and plain.
+function cleanName(value, fallback) {
+  const name = String(value || '').replace(/[\u0000-\u001f\u007f<>]/g, '').trim().slice(0, 16);
+  return name || fallback;
+}
+
+function createRoom(name) {
   const room = {
     code: newCode(),
+    names: [cleanName(name, 'Player 1'), 'Player 2'],
     tokens: [crypto.randomBytes(16).toString('hex'), null],
     streams: [null, null],
     last: [null, null],
@@ -82,13 +89,14 @@ function viewFor(room, seat) {
     tied: st.tied,
     winner: rel(st.winner),
     reason: st.reason,
-    picked: st.picks[seat] !== null
+    picked: st.picks[seat] !== null,
+    names: [room.names[seat], room.names[R.other(seat)]]
   };
 }
 
 function turnNote(room, seat) {
   if (room.state.phase !== 'attack') return '';
-  return room.state.turn === seat ? ' · your turn' : ' · opponent\'s turn';
+  return room.state.turn === seat ? ' · your turn' : ' · ' + room.names[room.state.turn] + '\'s turn';
 }
 
 // Sends the current state to both seats. textFor(seat) gives each side's message.
@@ -139,8 +147,8 @@ function effect(name) {
   return function () { return { effect: name }; };
 }
 
-function who(seat, actor) {
-  return seat === actor ? 'You ' : 'Opponent ';
+function who(room, seat, actor) {
+  return seat === actor ? 'You ' : room.names[actor] + ' ';
 }
 
 function doPlay(room, seat, index) {
@@ -150,11 +158,11 @@ function doPlay(room, seat, index) {
 
   const res = R.playCard(st, seat, index);
   if (st.phase === 'blastPick') {
-    broadcast(room, function (s) { return s === seat ? 'Blast · pick a card to destroy' : 'Opponent played Blast'; }, effect('blast'));
+    broadcast(room, function (s) { return s === seat ? 'Blast · pick a card to destroy' : room.names[seat] + ' played Blast'; }, effect('blast'));
     return null;
   }
   const tied = st.phase === 'shiv';
-  broadcast(room, function (s) { return who(s, seat) + R.describe(res) + (tied ? ' · tied, field clears' : ''); }, effect(res.effect));
+  broadcast(room, function (s) { return who(room, s, seat) + R.describe(res) + (tied ? ' · tied, field clears' : ''); }, effect(res.effect));
   if (tied) schedule(room, function () { runShiv(room); }, 1800);
   return null;
 }
@@ -180,7 +188,7 @@ function doShivPick(room, seat, index) {
 
   R.pickShiv(st, seat, index);
   if (st.phase === 'shivPick') {
-    broadcast(room, function (s) { return s === seat ? 'Waiting for the opponent\'s pick' : 'Opponent has picked · your pick'; });
+    broadcast(room, function (s) { return s === seat ? 'Waiting for ' + room.names[R.other(seat)] + '\'s pick' : room.names[seat] + ' has picked · your pick'; });
     return null;
   }
   afterShiv(room);
@@ -278,8 +286,10 @@ const server = http.createServer(function (req, res) {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/create') {
-    const room = createRoom();
-    return sendJson(res, 200, { room: room.code, token: room.tokens[0] });
+    return readJson(req, function (body) {
+      const room = createRoom(body && body.name);
+      sendJson(res, 200, { room: room.code, token: room.tokens[0] });
+    });
   }
 
   if (req.method === 'POST' && url.pathname === '/api/join') {
@@ -288,6 +298,7 @@ const server = http.createServer(function (req, res) {
       if (!room) return sendJson(res, 404, { error: 'Room not found' });
       if (room.tokens[1]) return sendJson(res, 409, { error: 'Room is full' });
       room.tokens[1] = crypto.randomBytes(16).toString('hex');
+      room.names[1] = cleanName(body.name, 'Player 2');
       sendJson(res, 200, { room: room.code, token: room.tokens[1] });
       startGame(room);
     });

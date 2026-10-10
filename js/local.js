@@ -29,6 +29,7 @@ FS.Local = (function () {
   function start() {
     stop();
     state = R.newGame();
+    UI.setNames();
     UI.hideOverlay();
     wait('Shiv to open the round');
     later(doShiv, 900);

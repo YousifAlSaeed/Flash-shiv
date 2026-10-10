@@ -96,6 +96,7 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .label.right { text-align: right; }
+.label.name { text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; }
 
 /* Seats (hand rows) */
 
@@ -497,6 +498,7 @@ button.card.selected {
 
 .menu { display: flex; flex-direction: column; gap: 12px; min-width: 300px; }
 .menu .join { display: flex; gap: 8px; }
+.menu-divider { margin-top: 6px; font-size: 16px; letter-spacing: .2em; color: var(--muted); }
 .menu .join .primary { flex: 1; }
 
 .menu input {

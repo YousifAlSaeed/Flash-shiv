@@ -12,23 +12,50 @@
     Online.stop();
   }
 
+  // The player's name for online games, remembered between visits.
+  function savedName() {
+    try { return localStorage.getItem('fs-name') || ''; } catch (e) { return ''; }
+  }
+
+  function keepName(name) {
+    const clean = name.trim().slice(0, 16);
+    try { localStorage.setItem('fs-name', clean); } catch (e) { /* storage unavailable */ }
+    return clean;
+  }
+
+  // Invite links ask for a name first, then join the room.
+  function invite(code, error) {
+    UI.showNamePrompt(code, savedName(), error, function (typed) {
+      const name = keepName(typed);
+      if (!name) return invite(code, 'Enter your name to join.');
+      stopAll();
+      Table.reset('Joining room');
+      Online.join(code, name, menu);
+    });
+  }
+
   function menu(error) {
     UI.showMenu({
       error: error,
+      name: savedName(),
       onComputer: function () {
         stopAll();
         Local.start();
       },
-      onCreate: function () {
+      onCreate: function (typed) {
+        const name = keepName(typed);
+        if (!name) return menu('Enter your name to play online.');
         stopAll();
         Table.reset('Creating a room');
-        Online.create(menu);
+        Online.create(name, menu);
       },
-      onJoin: function (code) {
+      onJoin: function (code, typed) {
+        const name = keepName(typed);
+        if (!name) return menu('Enter your name to play online.');
         if (!code.trim()) return menu('Enter a room code.');
         stopAll();
         Table.reset('Joining room');
-        Online.join(code, menu);
+        Online.join(code, name, menu);
       }
     });
   }
@@ -89,8 +116,7 @@
   const invited = new URLSearchParams(location.search).get('room');
   if (invited) {
     history.replaceState(null, '', location.pathname);
-    Table.reset('Joining room');
-    Online.join(invited, menu);
+    invite(invited.trim().toUpperCase().slice(0, 4));
   } else {
     menu();
   }

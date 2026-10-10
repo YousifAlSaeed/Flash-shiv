@@ -100,12 +100,14 @@ FS.Table = (function () {
     clearTimeout(timer);
     timer = setTimeout(function () {
       FS.Sound.play(finalState.winner === null ? 'tie' : (won ? 'win' : 'lose'));
-      UI.showResult(title, reasons[finalState.reason], R.total(finalState, YOU), R.total(finalState, OPP), onAgain);
+      UI.showResult(title, reasons[finalState.reason], R.total(finalState, YOU), R.total(finalState, OPP), onAgain,
+        finalState.names && finalState.names[1]);
     }, 1200);
   }
 
   function reset(message) {
     clearTimeout(timer);
+    UI.setNames();
     show(emptyState(), true, message || '');
   }
 

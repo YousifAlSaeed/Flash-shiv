@@ -15,6 +15,7 @@ FS.Online = (function () {
   let stream = null;
   let timer = null;
   let onFail = null;
+  let opponent = 'Opponent';
 
   function post(path, body) {
     return fetch(path, {
@@ -61,15 +62,17 @@ FS.Online = (function () {
       return;
     }
     if (msg.type === 'left') {
-      UI.status('Opponent disconnected · waiting for them to return');
+      UI.status(opponent + ' disconnected · waiting for them to return');
       return;
     }
     if (msg.type === 'rematch') {
-      UI.note('The opponent wants a rematch');
+      UI.note(opponent + ' wants a rematch');
       return;
     }
     if (msg.type !== 'state') return;
     if (msg.effect) FS.Sound.effect(msg.effect);
+    opponent = msg.view.names[1];
+    UI.setNames(msg.view.names[0], opponent);
 
     // After your own Blast, show the destroyed card before moving on.
     if (msg.destroyed && msg.byYou) {
@@ -88,7 +91,7 @@ FS.Online = (function () {
       UI.hideOverlay();
       Table.finish(view, function () {
         send('rematch');
-        UI.note('Waiting for the opponent');
+        UI.note('Waiting for ' + opponent);
       });
       return;
     }
@@ -120,12 +123,12 @@ FS.Online = (function () {
     });
   }
 
-  function create(fail) {
-    begin(post('/api/create'), fail);
+  function create(name, fail) {
+    begin(post('/api/create', { name: name }), fail);
   }
 
-  function join(code, fail) {
-    begin(post('/api/join', { room: code.trim().toUpperCase() }), fail);
+  function join(code, name, fail) {
+    begin(post('/api/join', { room: code.trim().toUpperCase(), name: name }), fail);
   }
 
   return { create: create, join: join, stop: stop };
